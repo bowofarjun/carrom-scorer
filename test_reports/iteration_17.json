@@ -1,0 +1,20 @@
+{
+  "summary": "Frontend-only mobile regression pass. Expo loaded without runtime errors; setup, toss, finite-series settings, board completion, rules opening, and theme tap were exercised. The tie-break scenario was not valid because the test awarded five points per board and produced a non-tie; no tie-break behavior is claimed.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [{"screen": "Active screen", "issues": ["Prior confirmed issue remains: Unlimited mode formats the active eyebrow as BOARD N OF 00; SeriesStatus shows the correct unlimited label."]}],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_17.json", "/app/test_reports/iteration_17_ui/"],
+  "action_items": ["Fix the Unlimited active header formatting from OF 00 to an Unlimited-specific label.", "Run a valid tie-break regression using one point per alternating board, then verify the deciding board awards the set."],
+  "critical_code_review_comments": ["Active() still unconditionally pads boardsPerSet, so boardsPerSet=0 renders OF 00.", "The tie-break state logic was not conclusively tested in this iteration."],
+  "updated_files": ["/app/test_reports/iteration_17.json"],
+  "success_rate": {"backend": "not tested (frontend-only request)", "frontend": "75% of executed checks passed; valid tie-break not executed"},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_call_test_agent_after_fix": true,
+  "context_for_next_testing_agent": "At 375x667, use men decrement to 1 and alternate winner A/B for eight boards to produce a true tie. Settings and rules modals require scroll_into_view_if_needed before tapping lower controls on mobile web.",
+  "rca_of_issue": "The attempted tie-break test selected the default five opponent men, so each board scored five points; it was a test setup error rather than evidence of a scorer defect. Mobile web also requires explicit viewport-safe scrolling for modal controls, including close rules."
+}

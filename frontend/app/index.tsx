@@ -13,11 +13,11 @@ type Team = "A" | "B";
 type Mode = "setup" | "toss" | "active";
 type RotationMode = "auto" | "manual" | "none" | "set";
 type Board = { number: number; winner: Team; points: number; queen: boolean; duesA: number; duesB: number };
-type Match = { type: "singles" | "doubles"; a: string; b: string; scores: { A: number; B: number }; board: number; setsTotal: number; currentSet: number; boardsPerSet: number; setScores: { A: number; B: number }; rotationMode: RotationMode; finalCrossoverDone: boolean; breakIndex: number; seats: string[]; dues: { A: number; B: number }; history: Board[] };
+type Match = { type: "singles" | "doubles"; a: string; b: string; scores: { A: number; B: number }; board: number; setsTotal: number; currentSet: number; boardsPerSet: number; setScores: { A: number; B: number }; rotationMode: RotationMode; finalCrossoverDone: boolean; tieBreak: boolean; breakIndex: number; seats: string[]; dues: { A: number; B: number }; history: Board[] };
 
 const C = { bg: "#121417", card: "#1A1D23", card2: "#252A34", text: "#F4F5F7", muted: "#9CA3AF", line: "#2D333F", amber: "#D97706", gold: "#FBBF24", green: "#059669", red: "#DC2626" };
 const seats = ["North", "East", "South", "West"];
-const defaultMatch: Match = { type: "singles", a: "Team 1", b: "Team 2", scores: { A: 0, B: 0 }, board: 1, setsTotal: 1, currentSet: 1, boardsPerSet: 8, setScores: { A: 0, B: 0 }, rotationMode: "auto", finalCrossoverDone: false, breakIndex: 0, seats: ["Team 1", "", "Team 2", ""], dues: { A: 0, B: 0 }, history: [] };
+const defaultMatch: Match = { type: "singles", a: "Team 1", b: "Team 2", scores: { A: 0, B: 0 }, board: 1, setsTotal: 1, currentSet: 1, boardsPerSet: 8, setScores: { A: 0, B: 0 }, rotationMode: "set", finalCrossoverDone: false, tieBreak: false, breakIndex: 0, seats: ["Team 1", "", "Team 2", ""], dues: { A: 0, B: 0 }, history: [] };
 
 export default function Index() {
   Object.assign(styles as Record<string, object>, { appbar: [styles.appbar, { flexWrap: "wrap", rowGap: 8 }], lightCard: lightStyles.card, lightControl: lightStyles.control, lightMuted: lightStyles.muted, lightRule: lightStyles.rule, optionRow: seriesStyles.optionRow, option: seriesStyles.option, optionActive: seriesStyles.optionActive, optionText: seriesStyles.optionText, rotationList: seriesStyles.rotationList, rotationOption: seriesStyles.rotationOption });
@@ -33,7 +33,7 @@ export default function Index() {
   const [themeDark, setThemeDark] = useState(true);
   const [hydrated, setHydrated] = useState(false);
 
-  useEffect(() => { AsyncStorage.getItem("carrom-match").then((value) => { if (value) { setMatch({ ...defaultMatch, ...JSON.parse(value), boardsPerSet: 8, rotationMode: "set" }); setMode("active"); } }).catch(() => undefined).finally(() => setHydrated(true)); }, []);
+  useEffect(() => { AsyncStorage.getItem("carrom-match").then((value) => { if (value) { setMatch({ ...defaultMatch, ...JSON.parse(value), rotationMode: "set" }); setMode("active"); } }).catch(() => undefined).finally(() => setHydrated(true)); }, []);
   useEffect(() => { if (mode === "active") AsyncStorage.setItem("carrom-match", JSON.stringify(match)); }, [match, mode]);
   const winnerName = winner === "A" ? match.a : match.b;
   const matchOver = match.setScores.A > Math.floor(match.setsTotal / 2) || match.setScores.B > Math.floor(match.setsTotal / 2);
@@ -46,7 +46,7 @@ export default function Index() {
   const completeBoard = () => {
     const before = match.scores[winner]; const base = men; const bonus = queen && before < 22 ? 3 : 0; const points = Math.min(base + bonus, 25 - before);
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setMatch((m) => { const scores = { ...m.scores, [winner]: m.scores[winner] + points }; const setDone = m.boardsPerSet === 0 ? scores[winner] >= 25 : m.board >= m.boardsPerSet; const nextSetScores = setDone ? { ...m.setScores, [winner]: m.setScores[winner] + 1 } : m.setScores; const seriesDone = nextSetScores[winner] > Math.floor(m.setsTotal / 2); const shouldRotate = m.rotationMode === "set" && setDone && !seriesDone; return { ...m, scores: setDone ? { A: 0, B: 0 } : scores, setScores: nextSetScores, currentSet: setDone && !seriesDone ? m.currentSet + 1 : m.currentSet, board: setDone && !seriesDone ? 1 : m.board + 1, finalCrossoverDone: m.finalCrossoverDone, breakIndex: shouldRotate ? (m.breakIndex + 1) % (m.type === "singles" ? 2 : 4) : m.breakIndex, seats: shouldRotate ? rotate(m) : m.seats, history: [...m.history, { number: m.board, winner, points, queen, duesA: m.dues.A, duesB: m.dues.B }], dues: { A: 0, B: 0 } }; });
+    setMatch((m) => { const scores = { ...m.scores, [winner]: m.scores[winner] + points }; const isTieBreak = m.tieBreak; const setDone = isTieBreak || (m.boardsPerSet === 0 ? scores[winner] >= 25 : m.board >= m.boardsPerSet); const tiedAfterBoards = m.boardsPerSet > 0 && m.board >= m.boardsPerSet && scores.A === scores.B && !isTieBreak; const nextSetScores = setDone && !tiedAfterBoards ? { ...m.setScores, [winner]: m.setScores[winner] + 1 } : m.setScores; const seriesDone = nextSetScores[winner] > Math.floor(m.setsTotal / 2); const shouldRotate = setDone && !tiedAfterBoards && !seriesDone; return { ...m, scores: setDone && !tiedAfterBoards ? { A: 0, B: 0 } : scores, tieBreak: tiedAfterBoards, setScores: nextSetScores, currentSet: shouldRotate ? m.currentSet + 1 : m.currentSet, board: shouldRotate ? 1 : m.board + 1, finalCrossoverDone: m.finalCrossoverDone, breakIndex: shouldRotate ? (m.breakIndex + 1) % (m.type === "singles" ? 2 : 4) : m.breakIndex, seats: shouldRotate ? rotate(m) : m.seats, history: [...m.history, { number: m.board, winner, points, queen, duesA: m.dues.A, duesB: m.dues.B }], dues: { A: 0, B: 0 } }; });
     setMen(5); setQueen(false);
   };
   const reset = () => { Alert.alert("Start a new match?", "The current board history will be cleared.", [{ text: "Cancel", style: "cancel" }, { text: "New match", style: "destructive", onPress: () => { AsyncStorage.removeItem("carrom-match"); setMatch(defaultMatch); setMode("setup"); setA(""); setB(""); } }]); };

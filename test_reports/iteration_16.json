@@ -1,0 +1,22 @@
+{
+  "summary": "Frontend-only mobile regression tested live Expo preview: Unlimited setup, below-25 continuation, AsyncStorage cold reload persistence, and the 25-point completion transition passed. Tie-break execution was not reached because the test assertion expected an active 25-point screen, while the app correctly showed the completed match state.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "Active screen", "issues": ["Unlimited mode still uses the generic BOARD N OF 00 eyebrow because Active() formats boardsPerSet=0 as 00; SeriesStatus correctly displays 'Board N · unlimited'."]}
+    ],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_16.json", "/app/test_reports/iteration_16_ui/"],
+  "action_items": ["Use an Unlimited-specific active header instead of BOARD N OF 00.", "Run a dedicated finite 8-board tie-break regression after the header fix or independently of completion-state assertions."],
+  "critical_code_review_comments": ["Active() still calls String(match.boardsPerSet).padStart(2, '0') for Unlimited mode, producing 'OF 00'.", "The current persisted-match hydration merge preserves boardsPerSet, so the previously reported Unlimited reload regression is fixed."],
+  "updated_files": ["/app/test_reports/iteration_16.json"],
+  "success_rate": {"backend": "not tested (frontend-only request)", "frontend": "80% of executed checks passed; tie-break not executed"},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_call_test_agent_after_fix": true,
+  "context_for_next_testing_agent": "At 375x667, clear localStorage, select Unlimited, complete four 5-point boards, reload, and verify Board 5 · unlimited with score 20. The fifth completion correctly transitions to completed state with set score 1—0 and disables Complete board; do not expect the active screen to remain visible at 25.",
+  "rca_of_issue": "The failed assertion was a test expectation issue, not an app failure: completion at 25 sets setScores to 1—0, resets board scores, and matchOver disables the completion button. The remaining UI issue is caused by Active() unconditionally formatting boardsPerSet, where Unlimited is represented by 0."
+}

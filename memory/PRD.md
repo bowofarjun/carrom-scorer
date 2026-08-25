@@ -26,6 +26,7 @@ Build a professional mobile assistant for scoring International Carrom Federatio
 - Replaced starter placeholder with complete setup → toss → active match flow.
 - Added responsive visual carrom board, seat badges, break indicator, scoreboard, due tracker, resolution controls, and named board history.
 - Added series settings, set rollover, visible set progress/set score, odd board limits, manual rotation action, per-set rotation, and final-set board-four crossover.
+- Added fixed 8-board set boundaries, ICF extra tie-break board handling after an 8-board tie, and Unlimited Boards mode ending only at 25 points with persistence across reloads.
 - Added ICF rules sheet with official rules link, theme palette switching, accessibility labels, stable test IDs, and persistence hydration.
 - Verified through repeated Expo preview regression testing, including landscape and cold reload restoration.
 
