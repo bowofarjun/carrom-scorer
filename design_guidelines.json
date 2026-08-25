@@ -1,0 +1,136 @@
+{
+  "app_name": "CarromMaster ICF",
+  "personality": "7 Dark-First Utility DARK",
+  "personality_one_liner": "A professional command-center scoring assistant for ICF Carrom matches with precision performance tracking and tactical dark optics.",
+  "color": {
+    "surface": "#121417",
+    "onSurface": "#F4F5F7",
+    "surfaceSecondary": "#1A1D23",
+    "onSurfaceSecondary": "#9CA3AF",
+    "surfaceTertiary": "#252A34",
+    "onSurfaceTertiary": "#E5E7EB",
+    "surfaceInverse": "#FFFFFF",
+    "onSurfaceInverse": "#121417",
+    "brand": "#D97706",
+    "brandPrimary": "#D97706",
+    "onBrandPrimary": "#FFFFFF",
+    "brandSecondary": "#B45309",
+    "onBrandSecondary": "#FEF3C7",
+    "brandTertiary": "#372712",
+    "onBrandTertiary": "#FBBF24",
+    "success": "#059669",
+    "onSuccess": "#ECFDF5",
+    "warning": "#D97706",
+    "onWarning": "#FEF3C7",
+    "error": "#DC2626",
+    "onError": "#FEF2F2",
+    "info": "#2563EB",
+    "onInfo": "#EFF6FF",
+    "border": "#2D333F",
+    "borderStrong": "#4B5563",
+    "divider": "#1F242C"
+  },
+  "typography": {
+    "displayFontFamily": "BarlowCondensed_700Bold",
+    "textFontFamily": "Satoshi",
+    "scale": {
+      "sm": 12,
+      "base": 14,
+      "lg": 16,
+      "xl": 20,
+      "2xl": 24
+    }
+  },
+  "spacing": {
+    "rule": "Generous touch targets and compact operational metrics layout for professional sports scoring",
+    "xs": 4,
+    "sm": 8,
+    "md": 12,
+    "lg": 16,
+    "xl": 24,
+    "2xl": 32,
+    "3xl": 48
+  },
+  "radius_tokens": {
+    "sm": 6,
+    "md": 12,
+    "lg": 20,
+    "pill": 999
+  },
+  "shadow_tier": "0",
+  "navigation": "bottom_tabs",
+  "icon_set": "MaterialCommunityIcons",
+  "glassmorphism": {
+    "enabled": true,
+    "do's": [
+      "Use frosted glass for sticky headers and bottom navigation over scrolling content",
+      "Apply translucent tinted base ≥75% opacity in dark mode"
+    ],
+    "dont's": [
+      "Never blur form fields or dense data tables",
+      "Avoid low contrast text over glass"
+    ]
+  },
+  "platform_libraries": {
+    "glass": {
+      "ios": "expo-glass-effect",
+      "android": "expo-blur",
+      "low_end_android_fallback": "solid surfaceSecondary"
+    },
+    "image": "expo-image",
+    "blur": "expo-blur",
+    "bottom_sheet": "@gorhom/bottom-sheet",
+    "animation": "react-native-reanimated",
+    "gesture": "react-native-gesture-handler"
+  },
+  "screens": [
+    {
+      "name": "Match Setup",
+      "purpose": "Configure match type (Singles/Doubles), player/team names, referee details, and ICF target points.",
+      "states": {
+        "loading": "Checking local match cache...",
+        "empty": "No recent presets found. Enter player names to begin.",
+        "error": "Failed to load match parameters. Tap to retry."
+      },
+      "layout": "Vertical stacked form with segmented selector for Singles/Doubles, collapsible advanced ICF rule toggles, and sticky bottom primary Start Match button with safe area clearance."
+    },
+    {
+      "name": "Toss & Break",
+      "purpose": "Perform coin toss and assign initial seating seats and break rotation according to ICF regulations.",
+      "states": {
+        "loading": "Preparing coin toss animation...",
+        "empty": "Toss pending. Select team to toss.",
+        "error": "Toss mechanism error. Retry."
+      },
+      "layout": "Interactive digital coin toss card with haptic trigger, visual seating arrangement diagram for 4 players (Doubles) or 2 players (Singles), and break indicator assignment."
+    },
+    {
+      "name": "Active Match",
+      "purpose": "Real-time ICF scorekeeper with visual carrom board, queen cover logic, due/foul tracking, and board history.",
+      "states": {
+        "loading": "Loading active board state...",
+        "empty": "Board 1 ready. Enter first board score.",
+        "error": "Score sync error. Reverting to last saved checkpoint."
+      },
+      "layout": "Command-center layout with top scoreboard, interactive visual carrom board with seat indicators and break icon, board history timeline, foul/due counter badge, and bottom quick score resolution pad."
+    },
+    {
+      "name": "ICF Rules & Reference",
+      "purpose": "Quick reference guide for International Carrom Federation scoring, queen rules, due penalties, and rotation.",
+      "states": {
+        "loading": "Loading ICF rulebook index...",
+        "empty": "No rules downloaded.",
+        "error": "Failed to load rulebook."
+      },
+      "layout": "Categorized accordion list with search bar, quick rule tags, and official penalty point breakdowns."
+    }
+  ],
+  "images": {
+    "carrom_hero": {
+      "url": "https://images.unsplash.com/photo-1620741212082-4e5c8194883e?auto=format&fit=crop&q=80&w=1000",
+      "dark": "https://images.unsplash.com/photo-1652558973183-a3f046921163?auto=format&fit=crop&q=80&w=1000",
+      "alt": "Professional carrom board setup with striker and coins"
+    }
+  },
+  "instructions_to_main_agent": "Implement a high-performance Expo React Native app using Dark-First Utility dark theme with amber warm accent (#D97706). Ensure strict support for portrait and landscape adaptive layouts, robust local caching of match histories, interactive board seat rotation, due/foul counters, queen cover validation under ICF rules, and sticky bottom primary CTAs. Follow all accessibility guidelines and touch target sizes ≥ 44pt."
+}

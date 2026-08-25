@@ -1,0 +1,20 @@
+{
+  "summary": "Frontend mobile regression retested setup, toss, active scoring, bounds, named history, theme palette, rules sheet, and landscape layout.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [{"flow": "Active match persistence", "issue": "After completing a named board and reopening the public preview in a fresh browser context, the app returned to setup instead of restoring the active match.", "affected_testIDs": ["new-match-button", "proceed-to-toss", "complete-board"]}],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_3.json"],
+  "action_items": ["Investigate AsyncStorage persistence and restore timing across a cold web reload/fresh context; verify carrom-match is written and read reliably."],
+  "critical_code_review_comments": ["Light palette styles are now applied to cards, controls, muted text, history, and rules; theme rendering visibly changed in the captured mobile screen."],
+  "updated_files": ["/app/test_reports/iteration_3.json"],
+  "success_rate": {"backend": "not tested (frontend-only request)", "frontend": "90%"},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_call_test_agent_after_fix": true,
+  "context_for_next_testing_agent": "At 375x667, setup to toss to active passed with Alice/Bob; men clamped 1..9, dues stayed nonnegative, queen + 9 produced +12 and named history. Theme screenshot visibly switched to white cards/light text palette and rules opened. Landscape overflow was not reached in the second run because the fresh context loaded setup rather than persisted active state.",
+  "rca_of_issue": "The tested cold reload/fresh browser context did not restore carrom-match. index.tsx reads AsyncStorage once on mount and only writes when mode is active; verify the write completes after state transitions and that the web storage backend is available before relying on the read."
+}

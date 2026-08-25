@@ -1,0 +1,20 @@
+{
+  "summary": "Frontend mobile regression retest completed for setup, named history, theme toggle, toss, active scoring controls, rules modal, and landscape layout.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [{"screen": "All screens", "issues": ["Theme toggle does not change the rendered page palette/background; dark card and content surfaces remain unchanged after toggling."]}],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_2.json"],
+  "action_items": ["Apply the light theme palette consistently to content cards, text, controls, board/history surfaces, and modal, not only SafeAreaView/appbar/title.", "Retest theme toggle and persistence after palette update."],
+  "critical_code_review_comments": ["themeDark is only applied to safe, appbar, and title styles; most screen styles still hardcode the dark palette."],
+  "updated_files": ["/app/test_reports/iteration_2.json"],
+  "success_rate": {"backend": "not tested (frontend-only request)", "frontend": "92%"},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_call_test_agent_after_fix": true,
+  "context_for_next_testing_agent": "At 375x667, setup -> toss -> active passed with Alice/Bob. Due stayed at 0 on decrement; opponent men capped at 9; queen completion created 'Alice won board' history; rules modal opened; 844x390 had no horizontal overflow. Theme toggle click worked but computed body background did not change and screenshot remained predominantly dark.",
+  "rca_of_issue": "The toggle updates themeDark state, but styles are static C constants. Only SafeAreaView/appbar background and title color reference !themeDark; all cards, content, controls, board, modal, and most text retain dark constants."
+}

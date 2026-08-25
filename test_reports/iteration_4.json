@@ -1,0 +1,20 @@
+{
+  "summary": "Frontend-only regression verified active-match persistence across reload/storage-preserving fresh context and confirmed 844x390 landscape has no horizontal overflow.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_4.json"],
+  "action_items": ["Add explicit testID attributes to toss winner choices and dues +/- controls for stable automated regression coverage."],
+  "critical_code_review_comments": ["Hydration now gates initial rendering and successfully restores the saved active match.", "Toss Choice instances and Due controls are interactive but do not expose stable testIDs, so those flows require text/positional selectors."],
+  "updated_files": ["/app/test_reports/iteration_4.json"],
+  "success_rate": {"backend": "not tested (frontend-only request)", "frontend": "100% executed regression checks; testability follow-up noted"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_call_test_agent_after_fix": false,
+  "context_for_next_testing_agent": "At 375x667, named Alice/Bob setup progressed through toss and board completion. Cold reload and a new context initialized with saved storage both restored Live match and Alice's board history. At 844x390, document body width equaled viewport width (844), with no horizontal overflow.",
+  "rca_of_issue": "Iteration 3 persistence issue is resolved by hydrated gating plus guarded AsyncStorage read. The verification passed after board completion, reload, and storage-preserving fresh context creation."
+}

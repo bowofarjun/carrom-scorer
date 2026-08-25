@@ -1,0 +1,20 @@
+{
+  "summary": "Frontend mobile preview tested through setup, singles/doubles selection, toss, live scoring, due controls, queen scoring, board history, rules modal, persistence reload, and landscape layout.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [{"screen": "All screens", "issues": ["No interactive or critical element exposes a data-testid; automated accessibility/regression targeting is unavailable."]}],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_1.json"],
+  "action_items": ["Add stable testID props to controls, inputs, header actions, modal/link, and reset confirmation.", "Use actual player/team names in completed-board history instead of hardcoded Team 1/Team 2.", "Make theme toggle change the rendered palette; themeDark currently only changes the icon."],
+  "critical_code_review_comments": ["frontend/.env provides EXPO_PUBLIC_BACKEND_URL, not EXPO_BACKEND_URL; any future API integration must use the configured public environment value.", "Header actions have icon-only Pressables without accessibility labels."],
+  "updated_files": ["/app/test_reports/iteration_1.json"],
+  "success_rate": {"backend": "not tested (frontend-only request)", "frontend": "90%"},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_call_test_agent_after_fix": true,
+  "context_for_next_testing_agent": "Same-context reload restores active match via AsyncStorage; isolated context starts setup as expected. Landscape 844x390 has no horizontal overflow.",
+  "rca_of_issue": "History hardcodes labels in History(): b.winner === 'A' ? 'Team 1' : 'Team 2', rather than using match names. Theme state is toggled but never used in styles. testID props are absent throughout index.tsx."
+}
