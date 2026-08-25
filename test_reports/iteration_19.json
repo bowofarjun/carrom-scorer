@@ -1,0 +1,43 @@
+{
+  "summary": "Doubles + light-theme regression validated on Expo web preview (375x800). All 10 primary scenarios pass EXCEPT reset flow: 4-field Doubles setup, team labels ('Alice & Charlie' / 'Bob & Dana'), ICF seat placement (N=Alice, E=Bob, S=Charlie, W=Dana; partners diagonal), scoreboard shows full team labels not clipped (numberOfLines=2 wraps 'Alexander & Christopher' at h=30px, 'Bartholomew & Danielle' at h=32px), seat rotation after full set (Set 1 -> Set 2 rotates [N,E,S,W]->[W,N,E,S]: verified N=Dana, E=Alice, S=Bob, W=Charlie). Singles regression still shows exactly 2 fields (input-Player 1 · North / input-Player 2 · South). Light-theme typed text is correctly dark rgb(15,23,42)=#0F172A on white bg. Sound toggle, theme toggle, Series settings, and Rules bottom sheet all render correctly in both themes. Unlimited header 'BOARD 01 · UNLIMITED' regression from prior iteration remains intact. ONE BUG FOUND: new-match-button (reset) is a no-op on web — Alert.alert callbacks are not invoked in react-native-web so the destructive 'New match' onPress never fires; user stays on Active screen and inputs are not cleared.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "IconButton new-match-button (reset)", "issue": "Tapping new-match-button on web does nothing. RN Alert.alert renders no dialog on react-native-web (no window.confirm, no in-DOM modal). The destructive button's onPress that calls AsyncStorage.removeItem, setMatch(defaultMatch), setMode('setup'), and clears setA/setB/setA2/setB2 is never invoked. Repro: start match -> tap refresh (new-match-button) -> screen unchanged, no dialog, complete-board still visible. Reference: /app/frontend/app/index.tsx:64", "testID": "new-match-button", "priority": "HIGH"}
+    ],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": [
+      {"component": "Alert.alert", "issue": "React Native Alert.alert with buttons is unreliable on react-native-web — button onPress callbacks never fire. Replace with a cross-platform confirm: e.g. `Platform.OS === 'web' ? window.confirm(...) && onConfirm() : Alert.alert(...)`, or use a Modal-based confirmation sheet. Reference: /app/frontend/app/index.tsx:64"}
+    ]
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_19.json",
+    "/app/test_reports/iteration_19_ui/setup_doubles.jpeg",
+    "/app/test_reports/iteration_19_ui/setup_light_doubles.jpeg",
+    "/app/test_reports/iteration_19_ui/toss.jpeg",
+    "/app/test_reports/iteration_19_ui/active_doubles.jpeg",
+    "/app/test_reports/iteration_19_ui/scoreboard_long_names.jpeg",
+    "/app/test_reports/iteration_19_ui/set2_rotated.jpeg",
+    "/app/test_reports/iteration_19_ui/reset_click_result.jpeg"
+  ],
+  "action_items": [
+    "Fix new-match-button reset: replace Alert.alert with a Platform-branched confirm — on web use window.confirm('Start a new match? The current board history will be cleared.') and, if true, run the same destructive callback; on native keep Alert.alert. Alternatively, render a small in-app confirmation Modal so behavior is consistent across platforms.",
+    "After the fix, re-verify: (a) starting a match then tapping new-match-button returns user to Setup screen with all 4 doubles fields (and both singles fields) cleared, (b) AsyncStorage 'carrom-match' key removed, (c) setMatch reset to defaultMatch."
+  ],
+  "critical_code_review_comments": [
+    "Field component (line 85): correctly forces inline color prop `{ color: light ? '#0F172A' : C.text }` on TextInput — fix verified working on web (computed color rgb(15,23,42)).",
+    "Score component (line 82): numberOfLines={2} added on team name Text — verified wrapping works for long combined names (Alexander & Christopher wraps to 2 lines, 30px height).",
+    "start() (lines 43-52): seat construction is correct for both singles ([p1,'',p2,'']) and doubles ([p1,p2,p3,p4]) — partners sit opposite (N-S diagonal, E-W diagonal) per ICF as required.",
+    "rotate() (line 55): `next.splice(0, 0, next.pop())` correctly performs [N,E,S,W]->[W,N,E,S] clockwise rotation (verified by seat positions after set 1).",
+    "reset() (line 64): Uses Alert.alert with destructive callback — this is the source of the reset bug on web (see ui_bugs).",
+    "index.tsx is still a single 84-line file with many inline components — non-blocking, but modularization would help maintainability."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "not tested (frontend-only)", "frontend": "90% — 9/10 primary scenarios passed; reset flow FAILED"},
+  "seed_data_creation": "None (localStorage cleared before each phase to ensure a clean Setup screen).",
+  "retest_needed": true,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Playwright patterns that work: viewport 375x800 (taller than 667 so Series-settings modal fits and testID buttons are inside viewport; if using 667, use `page.evaluate(el => el.click())` to bypass viewport bounds). To read seat placement, dump `document.body.innerText` and pair consecutive lines where a line equals one of NORTH/EAST/SOUTH/WEST with the previous line (player name). To dismiss the RN Alert on web — you can't; it doesn't render. To reach Active fast with best-of-3, click series-settings -> sets-3 -> boards-8 -> save-series-settings BEFORE proceed-to-toss. Verified match sequence: proceed-to-toss -> toss-team-a -> start-board -> complete-board (8 times) completes Set 1 and rotates seats.",
+  "rca_of_issue": "Reset bug RCA: `reset()` in /app/frontend/app/index.tsx:64 calls Alert.alert with a destructive-styled button whose onPress performs the actual reset. React Native for Web ships an Alert polyfill that has historically been either a no-op or a `window.alert(title)` call, and never invokes the array of button callbacks. Consequence: on the Expo web preview the app is essentially stuck once a match is started — the user cannot start a new match without manually clearing localStorage. Mitigation: branch on Platform.OS: on 'web' use `if (window.confirm('Start a new match? ...')) { /* same body */ }`; on native keep Alert.alert. Or render a cross-platform confirmation Modal (there is already a Modal for series-settings/rules — reuse the pattern with a 'Cancel'/'New match' button pair)."
+}

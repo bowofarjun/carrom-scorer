@@ -1,0 +1,26 @@
+{
+  "summary": "Reset flow re-tested on Expo web preview (375x800). Both scenarios PASS. PHASE 1 (accept): started a doubles match with Alice/Charlie/Bob/Dana, reached Active screen, mutated live state (winner=B, men=7, queen=on), tapped new-match-button, auto-accepted window.confirm — confirm message 'Start a new match?\\n\\nThe current board history will be cleared.' was captured, mode returned to Setup, all 4 doubles fields (input-Team 1 · Player at North/South, input-Team 2 · Player at East/West) are empty strings, and localStorage['carrom-match'] key is null. PHASE 2 (cancel): restarted flow, changed men-count to 7, tapped new-match-button and rejected window.confirm — confirm() was invoked exactly once, user remained on the Active screen (complete-board still visible), men-count preserved at 7, and localStorage['carrom-match'] still present. The Platform.OS === 'web' branch and doReset() helper (which now also resets toss/winner/men/queen/queenEligible) are working correctly.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_20.json",
+    "/app/test_reports/iteration_20_ui/reset_accept.jpeg",
+    "/app/test_reports/iteration_20_ui/reset_cancel.jpeg"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "reset() at /app/frontend/app/index.tsx:64 now correctly branches on Platform.OS === 'web' -> window.confirm(); doReset() also clears toss/winner/men/queen/queenEligible in addition to a/b/a2/b2 — verified via live state mutation prior to reset.",
+    "AsyncStorage.removeItem('carrom-match') is called synchronously inside the confirm-accepted branch — verified localStorage key is null immediately after reset."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "not tested (frontend-only)", "frontend": "100% — 2/2 reset scenarios passed"},
+  "seed_data_creation": "None. localStorage cleared once at test start.",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Reset flow verified fixed. To auto-drive window.confirm on web use `await page.evaluate(\"() => { window.confirm = (m) => true; }\")` (or return false for cancel). window.confirm reassignment must be done AFTER the app is loaded and BEFORE clicking new-match-button. Prior iteration_19 test-credentials context (viewport 375x800, best-of-3 shortcut via series-settings modal, seat rotation via 8x complete-board) still applies for any deeper regression."
+}
