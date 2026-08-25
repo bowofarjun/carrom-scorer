@@ -1,0 +1,23 @@
+{
+  "summary": "Verified LEADING scoreboard visibility fix across light theme, dark theme (regression), and doubles+light (combined-name regression). All three scenarios pass. Light-theme leading card now uses light amber background (#FEF3E2) with dark text (#475569 name, #0F172A score) and dark amber LEADING pill (#8D5B2A) — all clearly visible. Dark-theme leading card retains previous dark amber-brown bg (#2A2117) with cream muted name, white score, and gold LEADING pill. Doubles combined name 'Alice & Charlie' is fully readable in the light leading card without overflow.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_21_ui/"],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "index.tsx is 93 lines but each line is extremely long (some >5000 chars). File organization is fine, but readability suffers due to single-line component definitions.",
+    "The Score component correctly uses `light ? scoreLeaderLight : scoreLeader` variant selection and `[styles.leading, light && styles.leadingLight]` for the LEADING pill — the reported bug is fully addressed."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "N/A", "frontend": "100%"},
+  "seed_data_creation": "None (frontend-only, localStorage cleared before each scenario)",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "Bug fix for light-theme LEADING scoreboard visibility is verified working. Key selectors: [data-testid='theme-toggle'], [data-testid='input-Player 1 · North'], [data-testid='proceed-to-toss'], [data-testid='toss-team-a'], [data-testid='start-board'], [data-testid='complete-board']. To verify colors, query the DOM for a div whose text is exactly 'LEADING' and walk up to the score card container. Expected light-theme values: cardBg=rgb(254,243,226), border=rgb(217,119,6), name=rgb(71,85,105), score=rgb(15,23,42), LEADING=rgb(141,91,42). Expected dark-theme values: cardBg=rgb(42,33,23), name=rgb(156,163,175), LEADING=rgb(251,191,36).",
+  "rca_of_issue": "Original bug: scoreLeader style hardcoded backgroundColor:'#2a2117' which overrode lightCard's white bg in light theme, resulting in dark name/score text on dark bg = invisible. Fix (verified): added scoreLeaderLight (bg #FEF3E2, amber border) and leadingLight (color #8D5B2A) styles; Score component conditionally applies them based on the `light` prop. All three test scenarios (light leading, dark leading regression, doubles light leading) pass with correct computed styles."
+}
