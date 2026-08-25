@@ -1,0 +1,24 @@
+{
+  "summary": "Frontend-only mobile regression completed. Settings, rules copy, modal dismissal, setup/toss, scoring, persistence-visible UI, and theme controls were exercised. Fixed-eight-board set transition failed because scoring ended the set early at 25 points.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [
+      {"flow": "Completing an 8-board set", "issue": "Set advanced at board 4 after four 5-point boards (SET 2 OF 3 / Board 4 of 8). completeBoard treats scores[winner] >= 25 as setDone, so a set is not guaranteed to contain exactly 8 boards.", "affected_testIDs": ["complete-board"]}
+    ],
+    "design_issues": [
+      {"screen": "Active scoring and toss screens", "issues": ["Button text 'Complete board & rotate' and toss copy 'break indicator advances after each board' contradict set-only rotation and should be updated."]}
+    ],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_13.json", "/app/test_reports/iteration_13_ui/"],
+  "action_items": ["Change setDone so board 8 is the only normal set boundary; do not end a set early solely at 25 points when every set must have exactly 8 boards.", "Update active/toss copy to say rotation/break changes after set completion, not after every board."],
+  "critical_code_review_comments": ["index.tsx completeBoard currently uses m.board >= m.boardsPerSet || scores[winner] >= 25, directly contradicting the requirement that every set has exactly 8 boards."],
+  "updated_files": ["/app/test_reports/iteration_13.json"],
+  "success_rate": {"backend": "not tested (frontend-only request)", "frontend": "75%"},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_call_test_agent_after_fix": true,
+  "context_for_next_testing_agent": "At 375x667, clear localStorage before launch. Settings exposed exactly 1/3/5 sets, one 8-board option, and set-only rotation. Rules modal correctly said after each completed set. Four 5-point board completions advanced from set 1 board 1 to set 2 board 4 because the 25-point condition ended the set early.",
+  "rca_of_issue": "In completeBoard, setDone is computed as m.board >= m.boardsPerSet || scores[winner] >= 25. With default 5 men per board, a team reaches 25 after five boards; the observed transition occurred after four subsequent completions because the first completion plus seven loop taps crossed the early boundary. Remove the score threshold from setDone (or otherwise defer it until board 8) while retaining match winner handling as appropriate."
+}

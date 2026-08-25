@@ -1,0 +1,28 @@
+{
+  "summary": "Frontend-only review: settings and basic flow were exercised, but the clean eight-board transition could not be completed because the persisted active match rehydrated on each preview session. Code review found requirement regressions in crossover status and rules copy.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_12.json", "/app/test_reports/iteration_12_ui/"],
+  "action_items": [
+    "Remove the stale final-set board-4 CROSSOVER NEXT indicator from SeriesStatus; rotation is set-only.",
+    "Update the ICF rules modal rotation text, which still says doubles rotate after every board.",
+    "Re-run the eight-board set transition from a guaranteed cleared AsyncStorage state."
+  ],
+  "critical_code_review_comments": [
+    "SeriesStatus still computes and renders crossover when currentSet === setsTotal and board === 4, contradicting the clarified set-only rotation requirement.",
+    "Rules modal copy says 'Doubles rotate all four seats clockwise after every board', contradicting implemented set-only rotation and user requirements.",
+    "Preview persistence makes repeated mobile regression runs rehydrate an active match, so clean-state testing requires an explicit reset before every run."
+  ],
+  "updated_files": ["/app/test_reports/iteration_12.json"],
+  "success_rate": {"backend": "not tested (frontend-only request)", "frontend": "60% (settings/basic navigation passed; set transition inconclusive)"},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_call_test_agent_after_fix": true,
+  "context_for_next_testing_agent": "At 375x667, series settings showed only Single/Best of 3/Best of 5, 8 boards, and set-only rotation; rules modal opened/closed; setup-to-toss-to-active worked. Existing AsyncStorage match rehydrated into SET 2, Board 3 after prior runs and prevented a clean transition assertion.",
+  "rca_of_issue": "The stale crossover is still present in SeriesStatus's `crossover` expression and the rules text is hardcoded with per-board rotation. The incomplete transition test was caused by persisted carrom-match state, not an observed scoring failure."
+}
