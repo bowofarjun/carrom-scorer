@@ -1,0 +1,24 @@
+{
+  "summary": "Frontend-only regression at 375x667: the app loads and rules modal opens, but dismissal still fails because close-rules is rendered offscreen; horizontal overflow is also present.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Rules modal close control", "issue": "After opening rules-button at 375x667, close-rules is visible in the DOM but its bounding box is y=-578.95, so tapping/clicking it fails as outside the viewport.", "testID": "close-rules", "priority": "HIGH"}
+    ],
+    "integration_issues": [],
+    "design_issues": [
+      {"screen": "App viewport", "issues": ["document/body scroll width is 426px while client width is 375px, confirming horizontal overflow on the mobile preview."]}
+    ],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_9.json", "/app/test_reports/iteration_9_ui/mobile.png"],
+  "action_items": ["Fix rules bottom-sheet/header geometry so close-rules stays inside the visible sheet at 375x667.", "Remove the source of the 426px horizontal overflow on the 375px viewport.", "Retest series status rendering after the rules modal can be dismissed."],
+  "critical_code_review_comments": ["The web-only top:-700 absolute offset moves the close control outside the viewport rather than anchoring it to the sheet header.", "The root/appbar layout exceeds the mobile viewport width; inspect fixed-width or unbounded horizontal children."],
+  "updated_files": ["/app/test_reports/iteration_9.json"],
+  "success_rate": {"backend": "not tested (frontend-only request)", "frontend": "33%"},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_call_test_agent_after_fix": true,
+  "context_for_next_testing_agent": "At the public Expo preview, 375x667: app title loaded, rules-button opened the sheet, no captured runtime error logs, close-rules bounding box was x=301 y=-578.95 width=44 height=44, and document/body scroll width was 426 versus client width 375. Dismissal could not be completed.",
+  "rca_of_issue": "The current IconButton style applies position:absolute with top:-700 on web. In the rendered React Native Web Modal, this places close-rules far above the viewport (unlike the prior attempt, which placed it below). Position the control through a stable sheet header layout instead of a platform-specific large offset. The 426px width indicates an independent unbounded child/layout width issue that needs inspection."
+}

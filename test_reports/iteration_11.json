@@ -1,0 +1,20 @@
+{
+  "summary": "Frontend-only regression at 375x667 passed: app loads without runtime errors or horizontal overflow; rules modal opens/dismisses; series settings remain usable; setup-to-toss-to-active flow works.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_11.json", "/app/test_reports/iteration_11_ui/"],
+  "action_items": [],
+  "critical_code_review_comments": [],
+  "updated_files": ["/app/test_reports/iteration_11.json"],
+  "success_rate": {"backend": "not tested (frontend-only request)", "frontend": "100%"},
+  "seed_data_creation": "None",
+  "retest_needed": false,
+  "should_call_test_agent_after_fix": false,
+  "context_for_next_testing_agent": "At 375x667, documentElement/client/body widths all measured 375px. Rules close-rules bounds were x=319, y=12, width=44, height=44 and dismissed successfully. Series settings opened, changed, and saved. Setup → toss → active flow displayed Live match successfully.",
+  "rca_of_issue": "The prior 426px mobile overflow is resolved after app-bar flex wrapping; no remaining overflow was observed in the live preview."
+}

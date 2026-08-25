@@ -1,0 +1,28 @@
+{
+  "summary": "Frontend-only mobile regression verified series settings, odd 3-board selection, manual rotation visibility/action, and set rollover at the public Expo preview.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Active match board header", "issue": "The active header is hard-coded to display 'BOARD NN OF 08' even when a 3, 5, or 7 board set is selected.", "testID": "complete-board", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_5.json"],
+  "action_items": [
+    "Use match.boardsPerSet in the active board progress label instead of the fixed 08.",
+    "Expose current set and set score in the active UI; the state advances correctly but users cannot see set score/current-set progress."
+  ],
+  "critical_code_review_comments": [
+    "History items use board.number as the React key, but board numbering resets to 1 at each set, creating duplicate keys after rollover and potentially unstable history rendering.",
+    "Final-set board-4 crossover condition is implemented in completeBoard, but there is no visible crossover/status indicator to verify the special event for users."
+  ],
+  "updated_files": ["/app/test_reports/iteration_5.json"],
+  "success_rate": {"backend": "not tested (frontend-only request)", "frontend": "90%"},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_call_test_agent_after_fix": true,
+  "context_for_next_testing_agent": "At 375x667, series settings opened from the header; Best of 3, 3 boards, and manual rotation were selectable. After setup/toss, manual-rotate appeared and tapped successfully. Completing 3 boards advanced to board 1 while the series remained active. No browser error elements appeared. Screenshot showed history count 3 and active board controls.",
+  "rca_of_issue": "Active.tsx-equivalent inline component renders the progress string with literal 'OF 08' (index.tsx line 66), independent of match.boardsPerSet. Set score/currentSet are maintained in Match state (line 49) but never rendered. History key is only b.number while numbering restarts on each set (lines 49 and 68)."
+}

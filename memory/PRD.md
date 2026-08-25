@@ -20,10 +20,12 @@ Build a professional mobile assistant for scoring International Carrom Federatio
 - Due/foul counters, seat rotation, break rotation, and board history.
 - Dark/light theme control, rules reference, reset confirmation.
 - Adaptive layouts with safe touch targets and local persistence.
+- Odd-board set series configuration (single/best-of-3/5/7, 3/5/7 boards per set) with automatic, manual, no-rotation, and per-set rotation modes.
 
 ## Implemented (2026-08-25)
 - Replaced starter placeholder with complete setup → toss → active match flow.
 - Added responsive visual carrom board, seat badges, break indicator, scoreboard, due tracker, resolution controls, and named board history.
+- Added series settings, set rollover, visible set progress/set score, odd board limits, manual rotation action, per-set rotation, and final-set board-four crossover.
 - Added ICF rules sheet with official rules link, theme palette switching, accessibility labels, stable test IDs, and persistence hydration.
 - Verified through repeated Expo preview regression testing, including landscape and cold reload restoration.
 

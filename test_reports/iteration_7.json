@@ -1,0 +1,22 @@
+{
+  "summary": "Frontend-only mobile regression verified dynamic 3-board status, manual rotation, set rollover, theme toggle, and rules modal at the public Expo preview.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Rules modal close control", "issue": "At 375x667 after opening the rules modal, the Close rules button is outside the viewport and cannot be tapped normally; the modal is difficult/impossible to dismiss via UI.", "testID": "close-rules", "priority": "MEDIUM"}
+    ],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_7.json", "/app/test_reports/iteration_7_ui"],
+  "action_items": ["Fix rules bottom-sheet/header layout so close-rules remains within the 375px mobile viewport and is tappable."],
+  "critical_code_review_comments": ["History items continue to use board.number as the React key; numbering resets after set rollover and can produce duplicate keys."],
+  "updated_files": ["/app/test_reports/iteration_7.json"],
+  "success_rate": {"backend": "not tested (frontend-only request)", "frontend": "90%"},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_call_test_agent_after_fix": true,
+  "context_for_next_testing_agent": "Continuous mobile session passed app load, 3-board configuration, Board 1 of 3 status, manual rotate, rollover to SET 2 OF 3 / Board 1 of 3, theme toggle, and rules modal opening. Test ended because close-rules was outside viewport.",
+  "rca_of_issue": "The rules sheet header is rendered inside a max-height 88% bottom sheet and the close icon is laid out at the far right of a wide appbar/header context; at 375px the rendered sheet content is horizontally clipped, placing close-rules beyond the viewport. Reproduce by opening rules-button at 375x667 and attempting close-rules."
+}

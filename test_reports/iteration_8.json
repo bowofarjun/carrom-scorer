@@ -1,0 +1,22 @@
+{
+  "summary": "Frontend-only regression tested at 375x667. The app loads without runtime errors, but the rules modal close control remains below the viewport and cannot be dismissed through the requested UI flow.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "Rules modal close control", "issue": "After opening the rules modal at 375x667, close-rules has bounding box x=301, y=798.05, width=44, height=44, placing it below the 667px viewport. The dismissal assertion fails.", "testID": "close-rules", "priority": "HIGH"}
+    ],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": ["/app/test_reports/iteration_8.json", "/app/test_reports/iteration_8_ui"],
+  "action_items": ["Rework rules bottom-sheet/header layout so close-rules is positioned within the visible 375x667 sheet, then rerun the mobile regression."],
+  "critical_code_review_comments": ["The attempted absolute positioning on close-rules does not resolve the rendered web position; inspect sheet/header sizing and Modal layout rather than only the icon position."],
+  "updated_files": ["/app/test_reports/iteration_8.json"],
+  "success_rate": {"backend": "not tested (frontend-only request)", "frontend": "50%"},
+  "seed_data_creation": "None",
+  "retest_needed": true,
+  "should_call_test_agent_after_fix": true,
+  "context_for_next_testing_agent": "At the public Expo preview, app loaded at 375x667 and no console errors matching ERROR/Error/TypeError/ReferenceError were found. Opening rules-button reproduced the offscreen close-rules control; test stopped at the required dismissal assertion.",
+  "rca_of_issue": "The close icon's rendered web bounding box is y=798 despite the 667px viewport and the IconButton's absolute top/right styles. This indicates the containing sheet/header is laid out below the visible modal region or is affected by React Native web Modal layout; positioning the icon alone is insufficient. Reproduce with rules-button at 375x667, inspect close-rules bounding box, then fix the sheet/header geometry."
+}
