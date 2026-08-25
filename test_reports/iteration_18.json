@@ -1,0 +1,34 @@
+{
+  "summary": "Frontend-only end-to-end regression on Expo web preview at 375x667. Verified light theme visibility across Setup, Toss, Series-settings, Rules, and Active screens; confirmed Strict Queen Rule (queen-eligible-toggle appears when queen-toggle ON, queen-void-note shown when eligibility OFF, hidden when ON); confirmed Strict Queen scoring math (board 1: A=+8 with eligible ON; board 2: A=+5 with eligible OFF, history shows 'No queen bonus', total 13); confirmed sound-toggle icon flips and muted playback does not crash board completion; confirmed Unlimited eyebrow now reads 'BOARD 01/02 · UNLIMITED' (previous 'OF 00' regression fixed); confirmed AsyncStorage hydration after page reload keeps user in Live match.",
+  "backend_issues": {"critical": [], "minor": []},
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": [],
+    "react_native_issues": []
+  },
+  "test_report_links": [
+    "/app/test_reports/iteration_18.json",
+    "/app/test_reports/iteration_18_ui/setup_light.jpeg",
+    "/app/test_reports/iteration_18_ui/series_light.jpeg",
+    "/app/test_reports/iteration_18_ui/rules_light.jpeg",
+    "/app/test_reports/iteration_18_ui/toss_light.jpeg",
+    "/app/test_reports/iteration_18_ui/active_light_queen.jpeg",
+    "/app/test_reports/iteration_18_ui/after_board2.jpeg",
+    "/app/test_reports/iteration_18_ui/unlimited_header.jpeg",
+    "/app/test_reports/iteration_18_ui/hydrated.jpeg"
+  ],
+  "action_items": [],
+  "critical_code_review_comments": [
+    "index.tsx is a single 84-line file with a huge inline component; while functional, splitting the presentation components (Setup/Toss/Active/Score/Due/History/Rule) into separate files would improve maintainability. Non-blocking.",
+    "Object.assign on styles inside the component body (line 24) runs on every render; consider hoisting or removing the merge to prevent redundant work. Non-blocking.",
+    "chime.play() is called on every board completion but the audio element is a single shared player; if a board is completed while chime is still playing, the seekTo(0)+play() pattern is fine, but consider chime.pause() before seekTo for absolute safety on web."
+  ],
+  "updated_files": [],
+  "success_rate": {"backend": "not tested (frontend-only)", "frontend": "100% — 11/11 scenarios passed"},
+  "seed_data_creation": "None (localStorage cleared before each key phase to ensure a clean setup screen).",
+  "retest_needed": false,
+  "should_main_agent_self_test": false,
+  "context_for_next_testing_agent": "All requested features (Strict Queen Rule UI + scoring, Sound Feedback safety, Light theme visibility, Unlimited header, AsyncStorage hydration, end-to-end match flow) are verified working. Playwright script pattern that works on this app: use 375x667 viewport, testID selectors with force=True clicks, and clear localStorage before flows that need the Setup screen. Scoring assertion pattern that works: read document.body.innerText and check for expected substrings like '8', '13', 'No queen bonus', 'Queen covered', 'BOARD 01 · UNLIMITED'.",
+  "rca_of_issue": "N/A — no defects found in this iteration."
+}
