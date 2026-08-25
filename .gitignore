@@ -80,3 +80,30 @@ memory/test_credentials.md
 
 # Mobile development
 android-sdk/
+
+# Expo / React Native
+frontend/.expo/
+frontend/.expo-shared/
+frontend/.metro-cache/
+frontend/ios/build/
+frontend/android/build/
+frontend/android/app/build/
+frontend/android/.gradle/
+frontend/*.orig.*
+frontend/web-build/
+frontend/dist/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+*.orig
+
+# Emergent-managed
+.emergent/
+test_reports/
+
+# Local env files (never commit real values)
+frontend/.env.local
+frontend/.env.development
+backend/.env.local
