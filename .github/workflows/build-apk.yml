@@ -29,21 +29,11 @@ jobs:
       - name: Generate Android project
         run: cd frontend && npx expo prebuild --platform android
 
-      - name: Build Release APK (Bundles the App)
-        # This is the crucial change: assembleRelease bundles your JS code
+      - name: Build Release APK
         run: cd frontend/android && ./gradlew assembleRelease
-
-      - name: Sign the APK
-        # Android requires release APKs to be signed to install them
-        run: |
-          cd frontend/android/app/build/outputs/apk/release
-          mv app-release-unsigned.apk carrom-scorer.apk
-          keytool -genkey -v -keystore temp.keystore -alias temp -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Test" -storepass password -keypass password
-          APKSIGNER=$(find $ANDROID_HOME/build-tools -name apksigner | sort -r | head -n 1)
-          $APKSIGNER sign --ks temp.keystore --ks-pass pass:password carrom-scorer.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: carrom-scorer-release-apk
-          path: frontend/android/app/build/outputs/apk/release/carrom-scorer.apk
+          path: frontend/android/app/build/outputs/apk/release/app-release.apk
