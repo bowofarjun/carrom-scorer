@@ -1,7 +1,7 @@
 name: Build Android APK
 
 on:
-  workflow_dispatch: # This allows you to click a button to run the build
+  workflow_dispatch: 
 
 jobs:
   build:
@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Setup Java (Required for Android build)
+      - name: Setup Java
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
@@ -27,15 +27,23 @@ jobs:
         run: cd frontend && yarn install
 
       - name: Generate Android project
-        # This converts your Expo project into standard Android code
         run: cd frontend && npx expo prebuild --platform android
 
-      - name: Build APK using Gradle
-        # This compiles the code into an installable APK file
-        run: cd frontend/android && ./gradlew assembleDebug
+      - name: Build Release APK (Bundles the App)
+        # This is the crucial change: assembleRelease bundles your JS code
+        run: cd frontend/android && ./gradlew assembleRelease
 
-      - name: Upload APK so you can download it
+      - name: Sign the APK
+        # Android requires release APKs to be signed to install them
+        run: |
+          cd frontend/android/app/build/outputs/apk/release
+          mv app-release-unsigned.apk carrom-scorer.apk
+          keytool -genkey -v -keystore temp.keystore -alias temp -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Test" -storepass password -keypass password
+          APKSIGNER=$(find $ANDROID_HOME/build-tools -name apksigner | sort -r | head -n 1)
+          $APKSIGNER sign --ks temp.keystore --ks-pass pass:password carrom-scorer.apk
+
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: carrom-scorer-apk
-          path: frontend/android/app/build/outputs/apk/debug/app-debug.apk
+          name: carrom-scorer-release-apk
+          path: frontend/android/app/build/outputs/apk/release/carrom-scorer.apk
