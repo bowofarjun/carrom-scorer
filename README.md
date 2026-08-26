@@ -83,4 +83,4 @@ MIT — free to use, adapt and share.
 
 ## 🙏 Acknowledgements
 
-Rules & format based on the [International Carrom Federation](https://www.internationalcarromfederation.com/).
+Rules & format based on the [International Carrom Federation](https://www.indiancarrom.co.in/laws-of-carrom/).
