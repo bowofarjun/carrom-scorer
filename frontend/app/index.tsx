@@ -53,7 +53,7 @@ export default function Index() {
   const launch = () => { if (!toss) return; Haptics.selectionAsync(); setMatch((m) => ({ ...m, breakIndex: toss === "A" ? 0 : 2 })); setMode("active"); };
   const adjustDue = (team: Team, amount: number) => setMatch((m) => ({ ...m, dues: { ...m.dues, [team]: Math.max(0, m.dues[team] + amount) } }));
   const rotate = (m: Match) => { const next = [...m.seats]; if (m.type === "singles") { [next[0], next[2]] = [next[2], next[0]]; } else { next.splice(0, 0, next.pop() as string); } return next; };
-  const manualRotate = () => setMatch((m) => ({ ...m, seats: rotate(m), breakIndex: (m.breakIndex + 1) % (m.type === "singles" ? 2 : 4) }));
+  const manualRotate = () => setMatch((m) => ({ ...m, seats: [...rotate(m)], breakIndex: (m.breakIndex + 1) % (m.type === "singles" ? 2 : 4) }));
   
   const completeBoard = () => {
     const loser: Team = winner === "A" ? "B" : "A";
@@ -99,7 +99,7 @@ export default function Index() {
         board: shouldRotate ? 1 : m.board + 1,
         finalCrossoverDone: shouldRotate ? false : (needsCrossover ? true : m.finalCrossoverDone),
         breakIndex: shouldRotate ? (m.breakIndex + 1) % (m.type === "singles" ? 2 : 4) : m.breakIndex,
-        seats: shouldRotate ? rotate(m) : (needsCrossover ? rotate(m) : m.seats),
+        seats: shouldRotate ? [...rotate(m)] : (needsCrossover ? [...rotate(m)] : [...m.seats]),
         history: [...m.history, { number: m.board, winner, points, queen: queenValid, duesA: m.dues.A, duesB: m.dues.B }],
         dues: { A: 0, B: 0 }
       };
