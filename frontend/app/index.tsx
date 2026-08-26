@@ -42,7 +42,7 @@ export default function Index() {
   const [setsTotal, setSetsTotal] = useState(1); const [boardsPerSet, setBoardsPerSet] = useState(8); const rotationMode: RotationMode = "set";
   const [a, setA] = useState(""); const [b, setB] = useState(""); const [a2, setA2] = useState(""); const [b2, setB2] = useState("");
   const [toss, setToss] = useState<Team | null>(null); const [rules, setRules] = useState(false); const [showSeries, setShowSeries] = useState(false);
-  const [winner, setWinner] = useState<Team | null>(null); const [men, setMen] = useState(5); const [queen, setQueen] = useState(false); const [queenEligible, setQueenEligible] = useState(true); const [soundOn, setSoundOn] = useState(true);
+  const [winner, setWinner] = useState<Team | null>(null); const [men, setMen] = useState(1); const [queen, setQueen] = useState(false); const [queenEligible, setQueenEligible] = useState(true); const [soundOn, setSoundOn] = useState(true);
   const [themeDark, setThemeDark] = useState(true);
   const [hydrated, setHydrated] = useState(false);
   const chime = useAudioPlayer(require("../assets/chime.wav"));
