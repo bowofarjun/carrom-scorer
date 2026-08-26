@@ -1,0 +1,41 @@
+name: Build Android APK
+
+on:
+  workflow_dispatch: # This allows you to click a button to run the build
+
+jobs:
+  build:
+    name: Build APK
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Setup Java (Required for Android build)
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Install dependencies
+        run: cd frontend && yarn install
+
+      - name: Generate Android project
+        # This converts your Expo project into standard Android code
+        run: cd frontend && npx expo prebuild --platform android
+
+      - name: Build APK using Gradle
+        # This compiles the code into an installable APK file
+        run: cd frontend/android && ./gradlew assembleDebug
+
+      - name: Upload APK so you can download it
+        uses: actions/upload-artifact@v4
+        with:
+          name: carrom-scorer-apk
+          path: frontend/android/app/build/outputs/apk/debug/app-debug.apk
